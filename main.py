@@ -3,7 +3,7 @@ A basic pygame template
 """
  
 import pygame
-print("no")
+print("Hello world")
 # Define some colors
 BLACK    = (   0,   0,   0)
 WHITE    = ( 255, 255, 255)
