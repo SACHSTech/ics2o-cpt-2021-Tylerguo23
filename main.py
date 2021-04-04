@@ -2,7 +2,7 @@
 A basic pygame template
 """
  
-import pygame, sys, random
+import pygame, sys, random, math
 
 pygame.init()
 
@@ -265,16 +265,16 @@ while True:
 
 # Assign some variables that are needed in the game
 virus = virus0
-virusHP = 1000
+virus_HP = 800
 virus_x = 400
 virus_y = 200
-virus_x_move = 10
-virus_y_move = 2
+virus_x_move = 4
+virus_y_move = 0
 
 player_x = 400
 player_y = 600
-player_x_speed = 5
-player_y_speed = 5
+player_x_speed = 8
+player_y_speed = 8
 player_x_move = 0
 player_y_move = 0
 player_rect = pygame.Rect(0, 0, 20, 20)
@@ -282,6 +282,12 @@ player_rect = pygame.Rect(0, 0, 20, 20)
 if OS == 0:
     background = background0
     playerHP = 1
+if OS == 1:
+    background = background1
+    playerHP = 3
+if OS == 2:
+    background = background2
+    playerHP = 9999
 
 # Function for virus movement
 def virus_move(virus, x, y, xmove, ymove):
@@ -292,23 +298,66 @@ def virus_move(virus, x, y, xmove, ymove):
     if y < 40 or y > 360:
         ymove *= -1
     return virus.get_rect(center = (x, y)), x, y, xmove, ymove
-    
+
+# Function that bullets use to move toward player
+def Move(t0,t1,psx,psy,speed):
+    global mx
+    global my
+
+    speed = speed
+
+    distance = [t0 - psx+10, t1 - psy+10]
+    norm = math.sqrt(distance[0] ** 2 + distance[1] ** 2)
+    direction = [distance[0] / norm, distance[1 ] / norm]
+
+    bullet_vector = [direction[0] * speed, direction[1] * speed]
+    return bullet_vector
+
+# Function to make changing the virus's speed easier
+def change_virus_speed(xspeed, yspeed, incrementx, incrementy):
+    if xspeed >= 0:
+        xspeed += incrementx
+    if xspeed < 0:
+        xspeed -= incrementx
+    if yspeed >= 0:
+        yspeed += incrementy
+    if yspeed < 0:
+        yspeed -= incrementy
+    return xspeed, yspeed
+
+# The sprite class for the light green bullets
 class light_bullets(pygame.sprite.Sprite):
     def __init__(self, x, y, dest_x, dest_y):
         super().__init__()
         self.image = light_bullet.convert()
         self.rect = self.image.get_rect()
-        self.rect.x = x
-        self.rect.y = y
-        self.movex = ((dest_x-x)/30)
-        self.movey = ((dest_y-y)/30)
+        self.rect.center = (x, y)
+        self.bullet_vector = Move(dest_x, dest_y, x, y, 15)
     def update(self):
-        self.rect.x += self.movex
-        self.rect.y += self.movey
+        self.rect.centerx += self.bullet_vector[0]
+        self.rect.centery += self.bullet_vector[1]
+
+# The sprite class for the player's bullets
+class player_bullet(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        super().__init__()
+        self.rect = pygame.Rect(x, y, 4, 20)
+        self.rect.center = (x, y-20)
+    def update(self):
+        self.rect.centery -= 25
 
 bullet_list = pygame.sprite.Group()
+player_bullet_list = pygame.sprite.Group()
+virus_light_time = 0
+dt = 0
+cooldown = 500
+AdSpawn = False
+RanSpawn = False
+TroSpawn = False
+
 
 while(True):
+    virus_light_time += dt
     screen.blit(background, (0,0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -333,23 +382,73 @@ while(True):
                player_y_move += player_y_speed
             if event.key == pygame.K_DOWN or event.key == ord('s'):
                player_y_move -= player_y_speed
+    
+    #draws the barrier 
+    pygame.draw.line(screen, ORANGE, (0, 400), (800, 400), 2)
+    cooldown -= dt
+    keys = pygame.key.get_pressed()
+    
+    if keys[pygame.K_SPACE] and cooldown <= 0:
+        bullet = player_bullet(player_x, player_y)
+        player_bullet_list.add(bullet)
+        cooldown = 250
+    
     player_x += player_x_move
     player_y += player_y_move
+    if player_x < 0:
+        player_x = 0
+    if player_x > 800:
+        player_x = 800
+    if player_y > 790:
+        player_y = 790
+    if player_y < 410:
+        player_y = 410
+
+    if virus_HP == 600 and virus == virus0:
+        virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, 6, 0)
+        virus = virus1
+        AdSpawn = True
+    if virus_HP == 500:
+        RanSpawn = True
+    if virus_HP == 400 and virus == virus1:
+        virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, 2, 1)
+        virus = virus2
+    if virus_HP == 300:
+        TroSpawn = Truea
+    if virus_HP == 100 and virus == virus2:
+        virus = virus3
+
     virus_rect, virus_x, virus_y, virus_x_move, virus_y_move = virus_move(virus, virus_x, virus_y, virus_x_move, virus_y_move)
-    pygame.draw.line(screen, ORANGE, (0, 400), (800, 400), 2)
+
     player_rect.center = (player_x, player_y)
     pygame.draw.rect(screen, RED, player_rect)
     screen.blit(virus, virus_rect)
 
-    if pygame.time.get_ticks()%2 == 0:
+    if virus_light_time >= 1000 and virus_light_time <= 1500:
         bullet = light_bullets(virus_x, virus_y, player_x, player_y)
         bullet_list.add(bullet)
+    if virus_light_time > 1500:
+        virus_light_time = 0
+
+    for bullet in bullet_list:
+        if bullet.rect.colliderect(player_rect):
+            print("OOF")
 
     bullet_list.update()
     bullet_list.draw(screen)
+    player_bullet_list.update()
+
+    for bullet in player_bullet_list:
+        if bullet.rect.colliderect(virus_rect):
+            virus_HP -= 10
+            print("OUCH")
+            bullet.kill()
+        pygame.draw.rect(screen, RED, bullet.rect)
+    virus_HP_bar = pygame.Rect(0, 0, virus_HP, 5)
+    pygame.draw.rect(screen, GREEN, virus_HP_bar)
 
     pygame.display.update()
-    clock.tick(30)
+    dt = clock.tick(30)
 
 # Close the window and quit.
 # If you forget this line, the program will 'hang'
