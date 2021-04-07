@@ -1,5 +1,13 @@
 """ 
-A basic pygame template
+------------------------------------------------------
+Name: main.py
+
+Purpose:  Cool 2D-shooter/bullet-hell game that I made for computer science CPT and spent way too long on
+
+Author: Guo.T
+
+Created: 08/04/2021
+---------------------------------------  
 """
  
 import pygame, sys, random, math
@@ -32,22 +40,22 @@ select_fonti = pygame.font.SysFont('Arial', 20, False, True)
 
 # Define the images used in the cutscene
 youtube = pygame.image.load("Youtube.PNG")
-moneyad = pygame.image.load("Free Money.jpg")
-moneyad = pygame.transform.scale(moneyad, (282, 124))
+money_ad = pygame.image.load("Free Money.jpg")
+money_ad = pygame.transform.scale(money_ad, (282, 124))
 cursor = pygame.image.load("cursor.PNG")
 cursor.set_colorkey(RED)
 downloads = pygame.image.load("downloads.PNG")
 
 # Define the logos used in the select screen 
-wlogo = pygame.image.load("wlogo.png")
-mlogo = pygame.image.load("mlogo.png")
-llogo = pygame.image.load("llogo.png")
-wlogo.set_colorkey(WHITE)
-mlogo.set_colorkey(WHITE)
-llogo.set_colorkey((255, 0, 0))
+w_logo = pygame.image.load("wlogo.png")
+m_logo = pygame.image.load("mlogo.png")
+l_logo = pygame.image.load("llogo.png")
+w_logo.set_colorkey(WHITE)
+m_logo.set_colorkey(WHITE)
+l_logo.set_colorkey((255, 0, 0))
 
 # Define the images used in the actual game (some of these names aren't the greatest, 
-# but a lot of them are temporary and are only ever called once)
+# but a lot of them are temporary and are only ever called once so I made them short)
 background0 = pygame.image.load("windows.png")
 background1 = pygame.image.load("mac.jpg")
 background2 = pygame.image.load("linux.png")
@@ -74,11 +82,11 @@ rootvirusi.set_colorkey(WHITE)
 
 player_square = pygame.image.load("Player.png")
 
-wantivirus = pygame.image.load("wantivirus.png")
-wantivirus.set_colorkey(WHITE)
-mantivirus = pygame.image.load("mantivirus.png")
-mantivirus.set_colorkey(WHITE)
-lantivirus = mantivirus
+w_antivirus = pygame.image.load("wantivirus.png")
+w_antivirus.set_colorkey(WHITE)
+m_antivirus = pygame.image.load("mantivirus.png")
+m_antivirus.set_colorkey(WHITE)
+l_antivirus = m_antivirus
 
 light_bullet = pygame.image.load("green_bullet.png")
 light_bullet.set_colorkey(RED)
@@ -89,8 +97,8 @@ beyblade = pygame.image.load("beyblade.png")
 beyblade.set_colorkey(WHITE)
 
 error = pygame.image.load("Error Message.png")
-wcrash = pygame.image.load("Windowscrash.png")
-mcrash = pygame.image.load("Maccrash.jpg")
+w_crash = pygame.image.load("Windowscrash.png")
+m_crash = pygame.image.load("Maccrash.jpg")
 
 
 # Set the width and height of the screen [width, height]
@@ -119,6 +127,7 @@ def Rules(): #The Rules Page
          center_text("Just DODGE", text_fonti, BLACK, screen, 400, 500)
          center_text("If it looks like it can hurt you, it probably will", text_font, BLACK, screen, 400, 540)
          center_text("Press ESC to go back", text_font, BLACK, screen, 400, 750)
+         
          for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
                 pygame.quit()
@@ -126,6 +135,7 @@ def Rules(): #The Rules Page
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE: #Sets running to False if the user presses ESCAPE, sending them back to the homepage
                     running = False
+
          pygame.display.update()
          clock.tick(30)
 
@@ -138,37 +148,42 @@ def Cutscene(): #It's... just a cutscene I guess. A lot of blitting images and t
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE: # When SPACE is pressed at the start, the function returns (nothing), effectively ending it
                     return
+
+        #Screen fade/ Skip opportunity            
         shade = 255-i
         screen.fill((shade, shade, shade))
         center_text("Press SPACE now to skip scene", scene_font_impact, RED, screen, 478, 450)
         pygame.display.update()
         pygame.time.delay(15)
+
     screen.blit(youtube, (0, 0))
     pygame.display.update()
     pygame.time.delay(2000)
-    screen.blit(moneyad, (956-282, 0))
+    screen.blit(money_ad, (956-282, 0))
     pygame.display.update()
     pygame.time.delay(2000)
     center_text(":o", scene_font_impact, BLACK, screen, 350, 200)
     pygame.display.update()
     pygame.time.delay(2000)
     screen.blit(youtube, (0, 0))
-    screen.blit(moneyad, (956-282, 0))
+    screen.blit(money_ad, (956-282, 0))
     center_text("Free money??", scene_font, BLACK, screen, 350, 200)
     pygame.display.update()
     pygame.time.delay(2000)
     screen.blit(youtube, (0, 0))
-    screen.blit(moneyad, (956-282, 0))
+    screen.blit(money_ad, (956-282, 0))
     center_text("I love free money!", scene_font, BLACK, screen, 350, 200)
     pygame.display.update()
     pygame.time.delay(2000)
-    for i in range (31):
+
+    for i in range (31): #Move Cursor Toward Ad
         screen.blit(youtube, (0, 0))
-        screen.blit(moneyad, (956-282, 0))
+        screen.blit(money_ad, (956-282, 0))
         center_text("I love free money!", scene_font, BLACK, screen, 350, 200)
         screen.blit(cursor, (478+10*i, 256-6*i))
         pygame.display.update()
         pygame.time.delay(30)
+
     pygame.time.delay(500)
     screen.blit(downloads, (0, 0))
     screen.blit(cursor, (778,76))
@@ -183,7 +198,8 @@ def Cutscene(): #It's... just a cutscene I guess. A lot of blitting images and t
     screen.blit(cursor, (778,76))
     pygame.display.update()
     pygame.time.delay(1500)
-    for i in range (100):
+
+    for i in range (100): #Creates and moves multiple cursors
         screen.blit(downloads, (0,0))
         center_text("Better click them all just in case!", scene_font, BLACK, screen, 478, 400)
         screen.blit(cursor,(778-2.5*i, 76+0.2*i))
@@ -192,14 +208,15 @@ def Cutscene(): #It's... just a cutscene I guess. A lot of blitting images and t
         screen.blit(cursor,(778-0.1*i, 76+3.1*i))
         pygame.display.update()
         pygame.time.delay(5)
+    
     pygame.time.delay(3000)
 
 
 def Select(): #This is mostly just a bunch of text, and it returns a OS value from 0-2 depend on the user's choice
     running = True
-    wlogo_rect = wlogo.get_rect(center = (150, 400))
-    mlogo_rect = mlogo.get_rect(center = (478, 400))
-    llogo_rect = llogo.get_rect(center = (806, 400))
+    w_logo_rect = w_logo.get_rect(center = (150, 400))
+    m_logo_rect = m_logo.get_rect(center = (478, 400))
+    l_logo_rect = l_logo.get_rect(center = (806, 400))
     while running:
          click = False
          screen.fill(PURPLE)
@@ -223,9 +240,9 @@ def Select(): #This is mostly just a bunch of text, and it returns a OS value fr
          center_text("customized easily.", select_font, BLACK, screen, 806, 240)
          center_text("As many lives as you need", select_fonti, BLACK, screen, 806, 270)
          center_text("Practice Mode", select_fonti, BLACK, screen, 806, 300)
-         screen.blit(wlogo, wlogo_rect)
-         screen.blit(mlogo, mlogo_rect)
-         screen.blit(llogo, llogo_rect)
+         screen.blit(w_logo, w_logo_rect)
+         screen.blit(m_logo, m_logo_rect)
+         screen.blit(l_logo, l_logo_rect)
          for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
                 pygame.quit()
@@ -234,11 +251,11 @@ def Select(): #This is mostly just a bunch of text, and it returns a OS value fr
                 if event.button == 1:
                   click = True
          mx, my = pygame.mouse.get_pos()
-         if wlogo_rect.collidepoint(mx, my) and click == True:
+         if w_logo_rect.collidepoint(mx, my) and click == True:
              return 0
-         elif mlogo_rect.collidepoint(mx, my) and click == True:
+         elif m_logo_rect.collidepoint(mx, my) and click == True:
              return 1
-         elif llogo_rect.collidepoint(mx, my) and click == True:
+         elif l_logo_rect.collidepoint(mx, my) and click == True:
              return 2
          pygame.display.update()
          clock.tick(30)
@@ -249,7 +266,7 @@ pygame.display.set_caption("TerribleGame.exe")
 # Used to manage how fast the screen updates
 clock = pygame.time.Clock()
 
-# -------- Main Program Loop -----------
+# -------- Menu Program Loop -----------
 while True:
     # --- Main event loop
     click = False
@@ -275,7 +292,9 @@ while True:
 
     if help_button.collidepoint((mx, my)) and click: #Check if mouse is on a button and click is True
         Rules()
+
     if play_button.collidepoint((mx, my)) and click: #Check if mouse is on a button and click is True
+       
         #Set screen size, go into select screen and then cutscene, and start the game (by breaking out of this while loop)
         screen = pygame.display.set_mode((956, 512))
         OS = Select()
@@ -309,23 +328,26 @@ player_x_move = 0
 player_y_move = 0
 player_rect = pygame.Rect(0, 0, 20, 20)
 
+
 #Check which OS the user chose and set some variables/images accordingly
-if OS == 0:
+if OS == 0: #Windows
     background = background0
-    playerHP = 5
-    antivirus = wantivirus
-    crash = wcrash
+    player_HP = 5
+    antivirus = w_antivirus
+    crash = w_crash
     enemy_mult = 1
-if OS == 1:
+
+if OS == 1: #Mac
     background = background1
-    playerHP = 9
-    antivirus = mantivirus
-    crash = mcrash
+    player_HP = 9
+    antivirus = m_antivirus
+    crash = m_crash
     enemy_mult = 0.8
-if OS == 2:
+
+if OS == 2: #Linux
     background = background2
-    playerHP = 9999
-    antivirus = lantivirus
+    player_HP = 9999
+    antivirus = l_antivirus
     enemy_mult = 1
 
 # Function for virus movement
@@ -363,6 +385,7 @@ def change_virus_speed(xspeed, yspeed, incrementx, incrementy):
     if yspeed < 0:
         yspeed -= incrementy
     return xspeed, yspeed
+
 
 # Game Over Function
 def Game_Over():
@@ -432,6 +455,7 @@ class player_bullet(pygame.sprite.Sprite):
         self.rect.center = (x, y-20)
     def update(self):
         self.rect.centery -= 30
+
 
 # Sprite classes for the enemies themselves
 class advirus(pygame.sprite.Sprite):
@@ -530,21 +554,6 @@ class rootvirus(pygame.sprite.Sprite):
         self.rect.centerx += move_vector[0]
         self.rect.centery += move_vector[1]
 
-
-#Fixes bug that makes the movement break when player holds a key down during the help pages
-def correct_speed(player_x_speed, player_y_speed):
-     key = pygame.key.get_pressed()
-     player_x_move = 0
-     player_y_move = 0
-     if key[pygame.K_w] or key[pygame.K_UP]:
-        player_y_move -= player_y_speed
-     if key[pygame.K_s] or key[pygame.K_DOWN]:
-        player_y_move += player_y_speed
-     if key[pygame.K_a] or key[pygame.K_LEFT]:
-        player_x_move -= player_x_speed
-     if key[pygame.K_d] or key[pygame.K_RIGHT]:
-        player_x_move += player_x_speed
-     return player_x_move, player_y_move
 
 #The Help Page functions for each of the enemies
 def AdHelp():
@@ -652,39 +661,66 @@ def RootHelp():
         center_text("Press F to continue", menu_font, WHITE, screen, 400, 650)
         pygame.display.update()
 
+
+#Fixes bug that makes the movement break when player holds a key down during the help pages
+def correct_speed(player_x_speed, player_y_speed):
+     key = pygame.key.get_pressed()
+     player_x_move = 0
+     player_y_move = 0
+     if key[pygame.K_w] or key[pygame.K_UP]:
+        player_y_move -= player_y_speed
+     if key[pygame.K_s] or key[pygame.K_DOWN]:
+        player_y_move += player_y_speed
+     if key[pygame.K_a] or key[pygame.K_LEFT]:
+        player_x_move -= player_x_speed
+     if key[pygame.K_d] or key[pygame.K_RIGHT]:
+        player_x_move += player_x_speed
+     return player_x_move, player_y_move
+
+
+
+# === A WHOLE LOT more variable ===
+
 #Variable used to track time (clock.tick())
 dt = 0
+
 #Initilialise sprite lists
 bullet_list = pygame.sprite.Group()
 beyblade_list = pygame.sprite.Group()
 player_bullet_list = pygame.sprite.Group()
 enemies_list = pygame.sprite.Group()
+
 #Main virus attack cooldowns
 virus_light_time = 0
 virus_binary_time = 0
 virus_spasm = 0
+
 #Player attack cooldown, after hit invulnerability, and mask (for the beyblade collision)
 cooldown = 500
 player_immune = 0
 player_mask = pygame.mask.from_surface(player_square)
+
 #Disable Spawning of the smaller enemies until a certain condition is met
 AdSpawn = False 
 RanSpawn = False
 TroSpawn = False
 WormSpawn = False
 RootSpawn = False
+
 #If the enemy that spawns is the first of it's kind it will bring up an info menu
 AdFirst = True
 RanFirst = True
 TroFirst = True
 WormFirst = True
 RootFirst = True
+
 #The timers controlling the spawning of the enemies
 AdTimer = 0
 RanTimer = 0
 TroTimer = 0
 WormTimer = 0
 RootTimer = 0
+
 #The individual sprite groups for the enemies
 AdList = pygame.sprite.Group()
 RanList = pygame.sprite.Group()
@@ -692,15 +728,25 @@ TroList = pygame.sprite.Group()
 WormList = pygame.sprite.Group()
 RootList = pygame.sprite.Group()
 
-clock.tick()
-player_x_move, player_y_move = correct_speed(player_x_speed, player_y_speed)
+
+clock.tick() #Reset the time between ticks to 0
+player_x_move, player_y_move = correct_speed(player_x_speed, player_y_speed) #Fix the player's speed
+
+
+
+
+# -------- Main Game Loop -----------
 while(True):
+
     #Draw the background first so that it doesn't cover anything 
     screen.blit(background, (0,0))
+
+        # --- Event Check ---
     for event in pygame.event.get():
-        if event.type == pygame.QUIT:#Close the game is needed
+        if event.type == pygame.QUIT:#Close the game if needed
             pygame.quit()
             sys.exit()
+
         if event.type == pygame.KEYDOWN: #Controls using WASD
             if event.key == pygame.K_LEFT or event.key == ord('a'):
                 player_x_move -= player_x_speed
@@ -724,6 +770,8 @@ while(True):
     # Draws the barrier 
     pygame.draw.line(screen, ORANGE, (0, 400), (800, 400), 2)
     
+
+    # === Player Movement ===
 
     # Player Shooting
     cooldown -= dt
@@ -755,17 +803,23 @@ while(True):
     if player_y < 410:
         player_y = 410
 
+
+    # === Switching Between Main Virus Phases ===
+
     #Using if statements, check the health of the virus and switch stages in the fight
     #Also toggles the spawning of enemies and fires beyblades at certain healths
     if virus_HP == 700 and AdSpawn == False: #Start spawning adware
         AdSpawn = True
         AdTimer = random.randint(1000, 2000) 
+
     if virus_HP == 600 and virus == virus0: #Swithces to second phase
         virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, 6, 0)
         virus = virus1
+
     if virus_HP == 550 and RanSpawn == False: #Starts spawning ransomware
         RanSpawn = True
         RanTimer = random.randint(1000, 2000)
+
     if virus_HP == 400 and virus == virus1: #Switch to third phase, fires a beyblade, and starts spawning worms
         virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, 2, 1)
         virus_binary_time = 0
@@ -774,9 +828,11 @@ while(True):
         beyblade_list.add(beybladebul)
         WormSpawn = True
         WormTimer = random.randint(3000, 5000)
+
     if virus_HP == 300 and TroSpawn == False: #Start spawning trojans
         TroSpawn = True
         TroTimer = random.randint(1000, 2000)
+
     if virus_HP == 100 and virus == virus2: #Switch to final phase, start spawning rootkits, and fires two beyblades
         RootSpawn = True
         RootTimer = random.randint(1000, 2000)
@@ -789,16 +845,18 @@ while(True):
         beyblade_list.add(beybladebul)
 
 
+    # === Logic For All Small Enemies ===
+
     #Tick down the timer controlling enemy spawns
-    AdTimer -= (dt*enemy_mult)
+    AdTimer -= dt*enemy_mult
     if len(RanList.sprites())<3:
-        RanTimer -= (dt*enemy_mult)
+        RanTimer -= dt*enemy_mult
     if len(RanList.sprites())<1:
-        TroTimer -= (dt*enemy_mult)
+        TroTimer -= dt*enemy_mult
     if len(WormList.sprites())<1:
-        WormTimer -= (dt*enemy_mult)
+        WormTimer -= dt*enemy_mult
     if len(RootList.sprites())<1:
-        RootTimer -= (dt*enemy_mult)
+        RootTimer -= dt*enemy_mult
         
     #Create smaller enemies
     if AdSpawn == True and AdTimer <= 0 and len(AdList.sprites())<4: #Only spawn if spawning has been enabled, timer is up, and less than 4 already present
@@ -858,14 +916,6 @@ while(True):
         RootList.add(rootware) #Since the rootkit sprite is different from the others (cannot die and stuff) it is only added to it's individual group
         RootTimer = random.randint(20000, 21000)
 
-    # Assign player, antivirus, and virus locations
-    player_rect.center = (player_x, player_y)
-    antivirus_rect = antivirus.get_rect(center = (player_x, player_y))
-    virus_rect, virus_x, virus_y, virus_x_move, virus_y_move = virus_move(virus, virus_x, virus_y, virus_x_move, virus_y_move)
-    
-    # Draws antivirus first so that it doesn't overlap anything
-    screen.blit(antivirus, antivirus_rect)
-
     # All the sub-enemies make their movements
     RanList.update(player_x, player_y, dt)
     TroList.update(dt)
@@ -882,6 +932,21 @@ while(True):
             worm.clone_time = 4000
     RootList.update(player_x, player_y, dt)
 
+
+    # === Update Some Variables ===
+
+    # Assign rectangles for player, antivirus, and virus locations
+    player_rect.center = (player_x, player_y)
+    antivirus_rect = antivirus.get_rect(center = (player_x, player_y))
+    virus_rect, virus_x, virus_y, virus_x_move, virus_y_move = virus_move(virus, virus_x, virus_y, virus_x_move, virus_y_move)
+    
+    # Draws antivirus first so that it doesn't overlap anything else
+    screen.blit(antivirus, antivirus_rect)
+
+
+
+    # === Main Virus' Attacks ===
+
     # Tick down all the timers for the main virus' shooting
     virus_light_time += dt
     virus_binary_time += dt
@@ -892,72 +957,84 @@ while(True):
             bullet_list.add(bullet)
             virus_light_time = 0
     
-    if virus != virus0: #The streams of bullets, as well as the dash thing near the end
+    if virus != virus0: #The streams of bullets, as well as the dash attack near the end of the game
         if virus == virus3 and virus_spasm <=0 and virus_light_time >= 1000:#Increases speed by a lot if the conditions are met
             temp_y_move = virus_y_move
             virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, 50, -2)
             virus_spasm = 3
+
         if virus_light_time >= 1000 and virus_light_time <= 1400: #Fires bullets every frame for 0.4 seconds
          bullet = light_bullets(virus_x, virus_y, player_x, player_y)
          bullet_list.add(bullet)
+
         if virus_light_time > 1400:#Stops attack, resets speed
             if virus_spasm == 3:
                 virus_x_move, virus_y_move = change_virus_speed(virus_x_move, virus_y_move, -50, 2)
                 virus_y_move = temp_y_move
-            if virus_x <= 0:
-                virus_x = 50
-            elif virus_x >=800:
+            
+            if virus_x <= 40:     #Sometimes the fast movement throws the virus out of bounds and it gets stuck
+                virus_x = 50     #This prevents that
+            elif virus_x >=760:
                 virus_x = 750
+            
             virus_light_time = 0
             virus_spasm-=1 
     
     if virus == virus2: #The code block lazer thingy
-        if virus_binary_time >= 3000 and virus_binary_time <= 4000:#Yellow warning rectangle
+        if virus_binary_time >= 3000 and virus_binary_time <= 4000:             #Yellow warning rectangle
             pygame.draw.rect(screen, YELLOW, (virus_rect.x, virus_rect.y+50, 80, 800), 2)
-        if virus_binary_time >4000 and virus_binary_time <= 5000:#Red warning rectangle
+
+        if virus_binary_time >4000 and virus_binary_time <= 5000:               #Red warning rectangle
             pygame.draw.rect(screen, RED, (virus_rect.x, virus_rect.y+50, 80, 800), 2)
-        if virus_binary_time >5000 and virus_binary_time <= 5100:#Actual attack
+
+        if virus_binary_time >5000 and virus_binary_time <= 5100:               #Actual attack
             screen.blit(binary_block, (virus_rect.x, virus_rect.y+50))
             binary_rect = pygame.Rect(virus_rect.x, virus_rect.y, 80, 800)
-            if binary_rect.colliderect(player_rect) and player_immune <= 0:
-                playerHP-=1
+
+            if binary_rect.colliderect(player_rect) and player_immune <= 0:     #Check collision
+                player_HP-=1
                 pygame.time.delay(500)
                 player_immune = 1000
-        if virus_binary_time > 5100:#Reset timer
+        if virus_binary_time > 5100:           #Reset timer
             virus_binary_time = 0
 
 
+    # === Check Player Collision ===
 
     #Check player collision with enemy bullet or rootkit
     player_immune -= 40
     for bullet in bullet_list:
         if bullet.rect.colliderect(player_rect) and player_immune <= 0:
-            playerHP -=1
+            player_HP -=1
             pygame.time.delay(500)
             player_immune = 1000
         if bullet.rect.x < -100 or bullet.rect.x > 900 or bullet.rect.y > 900: #if bullet goes offscreen delete it
             bullet.kill()
+
     for root in RootList:
         if root.rect.colliderect(player_rect) and player_immune <= 0:
-            playerHP -=1
+            player_HP -=1
             pygame.time.delay(500)
             player_immune = 1000
     
+
     #Check player collision with beyblades using masks which I don't know how to use effectively :c
     for beybladecur in beyblade_list:
         offset = (beybladecur.rect.x - player_rect.x), (beybladecur.rect.y-player_rect.y)
         if player_mask.overlap(beybladecur.mask, offset) and player_immune <= 0:
-            playerHP -= 1
+            player_HP -= 1
             pygame.time.delay(500)
             player_immune = 1000
 
     # IF you lose, you lose. Unless the player is on Linux and somehow tries to die 999 times in which case they STILL CAN'T LOSE
-    if(playerHP <=0 and OS!= 2):
+    if(player_HP <=0 and OS!= 2):
         pygame.time.delay(1000)
         Game_Over()
         pygame.quit()
         sys.exit()
 
+    
+    # === Draw Enemies And Bullets ===
 
     #Update and draw all enemy bullets
     bullet_list.update()
@@ -975,20 +1052,23 @@ while(True):
             if(enemy.HP>3):
                 enemy_hp_rect.center = (enemy.rect.centerx, enemy.rect.centery+30)
             pygame.draw.rect(screen, GREEN, enemy_hp_rect)
-    
 
+
+    # === Check Player Bullets Collision ===
+    
     #Update, draw, and check collision for player bullets
     player_bullet_list.update()
-    for bullet in player_bullet_list:
-        enemy = pygame.sprite.spritecollideany(bullet, enemies_list)
+    for bullet in player_bullet_list: #Iterate through all player bullets
+        enemy = pygame.sprite.spritecollideany(bullet, enemies_list) #If one of them collides with an enemy
         if enemy:
-            bullet.kill()
+            bullet.kill() #delete bullet
             enemy.HP-=1
-            enemy.isAlive()
-        elif bullet.rect.colliderect(virus_rect):
+            enemy.isAlive() #check if enemy is still alive after losing 1 HP
+
+        elif bullet.rect.colliderect(virus_rect):                   # If one of them collides with main virus
             virus_HP -= 10 
-            bullet.kill()
-            if(virus_HP <=0):
+            bullet.kill() #delete bullet
+            if(virus_HP <=0):  #If virus is dead, initiates victory sequence                      
                 virus_HP_bar = pygame.Rect(0, 0, 800, 5)
                 pygame.draw.rect(screen, RED, virus_HP_bar)
                 pygame.display.update()
@@ -996,7 +1076,8 @@ while(True):
                 Victory()
                 pygame.quit()
                 sys.exit()
-        pygame.draw.rect(screen, RED, bullet.rect)
+
+        pygame.draw.rect(screen, RED, bullet.rect) #If no colliosn, just draw the bullet
 
     #Draws the main virus' health bar at the top
     virus_HP_bar = pygame.Rect(0, 0, virus_HP, 5)
@@ -1006,11 +1087,11 @@ while(True):
     pygame.draw.rect(screen, RED, player_rect)
     screen.blit(virus, virus_rect)
 
-    #Life counter display
-    center_text(str(playerHP), (pygame.font.SysFont('Georgia', 100, False, False)), RED, screen, 40, 720)
+    # Display life counter
+    center_text(str(player_HP), (pygame.font.SysFont('Georgia', 100, False, False)), RED, screen, 40, 720)
 
     pygame.display.update()
-    
+
     #dt is equal to the number of milliseconds between clock.tick() calls, and is used for basically everything
     dt = clock.tick(30)
 
