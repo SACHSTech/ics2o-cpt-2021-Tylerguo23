@@ -155,7 +155,8 @@ def Cutscene(): #It's... just a cutscene I guess. A lot of blitting images and t
         center_text("Press SPACE now to skip scene", scene_font_impact, RED, screen, 478, 450)
         pygame.display.update()
         pygame.time.delay(15)
-
+        
+    pygame.event.get()
     screen.blit(youtube, (0, 0))
     pygame.display.update()
     pygame.time.delay(2000)
@@ -312,6 +313,7 @@ while True:
     # --- Limit to 30 frames per second
     clock.tick(30)
 
+
 # Assign some variables that are needed in the game
 virus = virus0
 virus_HP = 800
@@ -349,6 +351,7 @@ if OS == 2: #Linux
     player_HP = 9999
     antivirus = l_antivirus
     enemy_mult = 1
+
 
 # Function for virus movement
 def virus_move(virus, x, y, xmove, ymove):
